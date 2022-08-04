@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class DSSearchWindow : ScriptableObject, ISearchWindowProvider
 {
@@ -39,19 +40,19 @@ public class DSSearchWindow : ScriptableObject, ISearchWindowProvider
             new SearchTreeGroupEntry(new GUIContent("Dialogue Group"), 1),
             new SearchTreeEntry(new GUIContent("Single Group", _indentationIcon))
             {
-                level = 2,
-                userData = new Group()
+                userData = new Group(),
+                level = 2
             }
         };
 
         return searchTreeEntries;
     }
 
-    public bool OnSelectEntry(SearchTreeEntry SearchTreeEntry, SearchWindowContext context)
+    public bool OnSelectEntry(SearchTreeEntry searchTreeEntry, SearchWindowContext context)
     {
         Vector2 localMousePosition = _graphView.GetLocalMousePosition(context.screenMousePosition, true);
-        
-        switch (SearchTreeEntry.userData)
+
+        switch (searchTreeEntry.userData)
         {
             case DSDialogueType.SingleChoice:
             {
@@ -71,7 +72,7 @@ public class DSSearchWindow : ScriptableObject, ISearchWindowProvider
                 return true;
             }
 
-            case DSGroup _:
+            case Group _:
             {
                 _graphView.CreateGroup("DialogueGroup", localMousePosition);
 

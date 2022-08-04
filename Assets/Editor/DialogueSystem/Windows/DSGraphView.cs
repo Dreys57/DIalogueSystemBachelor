@@ -144,7 +144,6 @@ public class DSGraphView : GraphView
         DSNode node = (DSNode) Activator.CreateInstance(nodeType);
         
         node.Initialize(nodeName, this, position);
-        node.Draw();
 
         AddUngroupedNodes(node);
 

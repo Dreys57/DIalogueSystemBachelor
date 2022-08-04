@@ -7,7 +7,7 @@ public class DSSingleChoiceNode : DSNode
 {
     public override void Initialize(string nodeName, DSGraphView graphView, Vector2 position)
     {
-        base.Initialize(nodeName, graphView, position);
+       base.Initialize(nodeName, graphView, position);
 
         dialogueType = DSDialogueType.SingleChoice;
 

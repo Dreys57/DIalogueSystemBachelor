@@ -53,6 +53,7 @@ public class DSInspector : Editor
 
         DrawFiltersArea();
 
+        bool currentGroupedDialoguesFilter = _groupedDialoguesProperty.boolValue;
         bool currentStartingDialogueFilter = _startingDialoguesOnlyProperty.boolValue;
 
         List<string> dialogueNames;
@@ -61,7 +62,7 @@ public class DSInspector : Editor
 
         string dialogueInfoMessage;
 
-        if (_groupedDialoguesProperty.boolValue)
+        if (currentGroupedDialoguesFilter)
         {
             List<string> dialogueGroupNames = dialogueContainer.GetDialogueGroupNames();
 
@@ -132,7 +133,6 @@ public class DSInspector : Editor
         _startingDialoguesOnlyProperty.DrawPropertyField();
 
         DSInspectorUtility.DrawSpace(6);
-        EditorGUILayout.Space(6);
     }
 
     private void DrawDialogueGroupArea(DSDialogueContainerSO dialogueContainer, List<string> dialogueGroupNames)
@@ -141,7 +141,7 @@ public class DSInspector : Editor
 
         int oldSelectedDialogueGroupIndex = _selectedDialogueGroupIndexProperty.intValue;
 
-        DSDialogueGroupSO oldDialogueGroup = (DSDialogueGroupSO)_dialogueGroupProperty.objectReferenceValue;
+        DSDialogueGroupSO oldDialogueGroup = (DSDialogueGroupSO) _dialogueGroupProperty.objectReferenceValue;
 
         bool isOldDialogueGroupNull = oldDialogueGroup == null;
 
@@ -181,7 +181,7 @@ public class DSInspector : Editor
         UpdateIndexOnNamesList(dialogueNames, _selectedDialogueIndexProperty, oldSelectedDialogueIndex, oldDialogueName,
             isOldDialogueNull);
 
-        _selectedDialogueIndexProperty.intValue = DSInspectorUtility.DrawPopup("Dialogue Group",
+        _selectedDialogueIndexProperty.intValue = DSInspectorUtility.DrawPopup("Dialogue",
             _selectedDialogueIndexProperty.intValue, dialogueNames.ToArray());
 
         string selectedDialogueName = dialogueNames[_selectedDialogueIndexProperty.intValue];
