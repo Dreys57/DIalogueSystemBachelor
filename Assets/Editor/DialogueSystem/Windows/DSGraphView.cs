@@ -17,6 +17,10 @@ public class DSGraphView : GraphView
     private SerializableDictionary<string, DSGroupErrorData> _groups;
     private SerializableDictionary<Group, SerializableDictionary<string, DSNodeErrorData>> _groupedNodes;
 
+    private List<DSNode> _nodesToCopy;
+
+    private int _index = 3;
+    
     private int _nameErrors;
     public int nameErrors
     {
@@ -48,6 +52,8 @@ public class DSGraphView : GraphView
         _ungroupedNodes = new SerializableDictionary<string, DSNodeErrorData>();
         _groups = new SerializableDictionary<string, DSGroupErrorData>();
         _groupedNodes = new SerializableDictionary<Group, SerializableDictionary<string, DSNodeErrorData>>();
+
+        _nodesToCopy = new List<DSNode>();
         
         AddManipulators();
         AddSearchWindow();
@@ -93,6 +99,69 @@ public class DSGraphView : GraphView
         this.AddManipulator(CreateNodeContextualMenu("Add Node (Multiple Choice)", DSDialogueType.MultipleChoice));
         
         this.AddManipulator(CreateGroupContextualMenu());
+        
+        this.AddManipulator(CopyContextualMenu());
+        this.AddManipulator(PasteContextualMenu());
+    }
+
+    private IManipulator CopyContextualMenu()
+    {
+        ContextualMenuManipulator contextualMenuManipulator = new ContextualMenuManipulator(menuEvent =>
+            menuEvent.menu.AppendAction("Copy Nodes", actionEvent => CopyAction()));
+
+        return contextualMenuManipulator;
+    }
+    
+    private IManipulator PasteContextualMenu()
+    {
+        ContextualMenuManipulator contextualMenuManipulator = new ContextualMenuManipulator(menuEvent =>
+            menuEvent.menu.AppendAction("Paste Nodes", actionEvent => PasteAction()));
+
+        return contextualMenuManipulator;
+    }
+
+    private void CopyAction()
+    {
+        serializeGraphElements = new SerializeGraphElementsDelegate(Copy);
+        
+        CopySelectionCallback();
+    }
+
+    private string Copy(IEnumerable<GraphElement> elements)
+    {
+        string data = "";
+        
+        _nodesToCopy.Clear();
+
+        foreach (GraphElement selectedElement in selection)
+        {
+            DSNode node = (DSNode) selectedElement;
+            
+            _nodesToCopy.Add(node);
+        }
+
+        return data;
+    }
+    
+    private void PasteAction()
+    {
+        unserializeAndPaste = new UnserializeAndPasteDelegate(Paste);
+        
+        PasteCallback();
+    }
+
+    private void Paste(string operationName, string data)
+    {
+        ClearSelection();
+        foreach (DSNode node in _nodesToCopy)
+        {
+            DSNode newNode = CreateNode(_index.ToString(), node.dialogueType, node.GetPosition().position);
+            AddElement(newNode);
+
+            ++_index;
+            
+            AddToSelection(newNode);
+        }
     }
 
     private IManipulator CreateGroupContextualMenu()
